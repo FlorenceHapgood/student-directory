@@ -14,7 +14,7 @@ end
 def interactive_menu
   loop do
     print_menu
-    process(gets.chomp) #so interesting that you can split the puts and gets like this
+    process(STDIN.gets.chomp) #so interesting that you can split the puts and gets like this
   end
 end
 
@@ -53,7 +53,7 @@ def input_students
 
   #@students = []
 
-  name = gets.chomp
+  name = STDIN.gets.chomp
 
   while !name.empty?
 
@@ -61,7 +61,7 @@ def input_students
 
     puts "Now we have #{@students.count} students"
 
-    name = gets.chomp #this is refering to the line before, chomping the puts line from "now we have x students"
+    name = STDIN.gets.chomp #this is refering to the line before, chomping the puts line from "now we have x students"
     #because name is the same variable as on our while loop, we can reset our original name that way.
 
   end
@@ -97,8 +97,8 @@ def save_students
   file.close
 end
 
-def load_students
-  file = File.open("students.csv", "r")
+def load_students(filename = "students.csv") #this is more flexible (an argument) but we still have a default value.
+  file = File.open(filename, "r")
   file.readlines.each do |line| #very interesting
     name, cohort = line.chomp.split(",") #creates an array with two values.
     #Also very interesting, naming two variables at once: this is caleld parallel assignment
@@ -108,5 +108,17 @@ def load_students
 end
 
 
+def try_load_students
+  filename = ARGV.first
+  return if filename.nil? #confusing, why is this necessary if we've got our else method below...
+  if File.exists?(filename)
+    load_students(filename)
+    puts "Loaded #{@students.count} from #{filename}"
+  else
+    puts "Sorry, #{filename} doesn't exist"
+    exit
+  end
+end
 
+try_load_students
 interactive_menu
